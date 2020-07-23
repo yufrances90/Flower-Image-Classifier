@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
+import json
 
 from PIL import Image
 
@@ -53,3 +54,11 @@ def predict(image_path, model, top_k=1):
     
     
     return probs, classes
+
+
+def load_label_mapping(json_file): 
+
+    with open('label_map.json', 'r') as f:
+        class_names = json.load(f)
+
+    return class_names
