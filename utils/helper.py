@@ -24,7 +24,7 @@ def process_image(np_image):
     
     return tf.image.resize(image_tensor, [img_height, img_width]).numpy()
 
-def predict(image_path, model, top_k=1):
+def predict(image_path, model, json_file, top_k):
     
     im = Image.open(image_path)
     test_image = np.asarray(im)
@@ -40,9 +40,11 @@ def predict(image_path, model, top_k=1):
     sorted_list_by_value = sorted(result_dict, key=result_dict.__getitem__)
     
     sorted_list_by_value.reverse()
+
+    class_names = load_label_mapping(json_file)
     
     probs = []
-    classes = []
+    labels = []
     
     for index in sorted_list_by_value[:top_k]:
         
@@ -50,10 +52,10 @@ def predict(image_path, model, top_k=1):
         tmp_prob = result_dict[index]
         
         probs.append(tmp_prob)
-        classes.append(tmp_class)
+        labels.append(class_names[tmp_class])
     
     
-    return probs, classes
+    return probs, labels
 
 
 def load_label_mapping(json_file): 

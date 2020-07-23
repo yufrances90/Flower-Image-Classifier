@@ -15,6 +15,11 @@ def main():
     default='./label_map.json', 
     help='JSON file that maps the class values to other category names'
 )
+@click.option(
+    '--top-k', 
+    default=1, 
+    help='the top K classes along with associated probabilities'
+)
 def predict_class(**kwargs):
 
     '''
@@ -28,18 +33,21 @@ def predict_class(**kwargs):
 
     image_filepath = kwargs['image_filepath'] 
 
-    probs, classes = uh.predict(image_filepath, model)
-
     json_filepath = kwargs['json_filepath']
 
-    class_names = uh.load_label_mapping(json_filepath)
+    top_k = kwargs['top_k']
 
-    image_class_label = class_names[classes[0]]
-
-    msg = 'Final result: {} with probability {}'.format(image_class_label, probs[0])
+    probs, labels = uh.predict(image_filepath, model, json_filepath, top_k)
 
     click.echo('****************************************************************************')
-    click.echo(msg)
+    click.echo('**********************      Final Result    ********************************')
+
+    for index in range(top_k):
+
+        msg = '{}. {} with probability {}'.format(index+1, labels[index], probs[index])
+        
+        click.echo(msg)
+
     click.echo('****************************************************************************')
 
 if __name__ == '__main__':
